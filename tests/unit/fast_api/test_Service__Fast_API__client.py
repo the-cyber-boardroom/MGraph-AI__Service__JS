@@ -55,4 +55,5 @@ class test_Service__Fast_API__client(TestCase):
             assert _.is_local_stack_configured_and_available() is True
 
     def test__config_fast_api_routes(self):
-        assert self.fast_api.routes_paths() == sorted(ROUTES_PATHS__INFO)
+        assert self.fast_api.routes_paths() == sorted(['/auth/set-auth-cookie', '/auth/set-cookie-form'] +
+                                                      ROUTES_PATHS__INFO)
