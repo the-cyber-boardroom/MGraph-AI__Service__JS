@@ -20,8 +20,8 @@ from os import chmod
 from mgraph_ai_service_js.schemas.Safe_Str__Javascript import Safe_Str__Javascript
 
 # Configuration constants
-DENO__VERSION__COMPATIBLE_WITH_LAMBDA = '2.4.0'  #''2.3.1' #'2.0.0' #'1.46.3' #'1.40.5'
-DENO__VERSION__LATEST                 = '2.4.0'
+DENO__VERSION__COMPATIBLE_WITH_LAMBDA = '2.3.7'  #''2.3.1' #'2.0.0' #'1.46.3' #'1.40.5'
+DENO__VERSION__LATEST                 = '2.4.0' # this doesn't work
 FOLDER_NAME__DENO                     = 'deno-js'
 FILE__NAME__DENO                      = 'deno'
 VERSION__DENO                         = os.getenv('DENO_VERSION', f'v{DENO__VERSION__COMPATIBLE_WITH_LAMBDA}')
