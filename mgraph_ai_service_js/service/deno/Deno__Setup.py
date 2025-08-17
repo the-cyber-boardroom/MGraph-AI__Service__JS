@@ -14,7 +14,7 @@ URL__GITHUB__DENO__RELEASES_DOWNLOAD = "https://github.com/denoland/deno/release
 
 class Deno__Setup(Type_Safe):
 
-    def install(self) -> Path:                  # Download Deno if needed (32MB)  # todo: refactor to create a local install.json file which captures the status and stats of the download
+    def install(self) -> bool:                  # Download Deno if needed (32MB)  # todo: refactor to create a local install.json file which captures the status and stats of the download
         deno_path = self.file_path__deno()
 
 

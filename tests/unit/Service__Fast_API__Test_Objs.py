@@ -31,8 +31,8 @@ def setup_local_stack() -> Local_Stack:
 def setup__service_fast_api_test_objs():
         with service_fast_api_test_objs as _:
             if service_fast_api_test_objs.setup_completed is False:
-                _.fast_api         = lambda_handler.service_fast_api  #use this one which is always invoked on test execution
-                #_.fast_api         = Service__Fast_API().setup()
+                _.fast_api         = lambda_handler.service_fast_api    # use this one which is always invoked on test execution
+                #_.fast_api         = Service__Fast_API().setup()       # if we do this we are creating this object again
                 _.fast_api__app    = _.fast_api.app()
                 _.fast_api__client = _.fast_api.client()
                 _.local_stack      = setup_local_stack()
