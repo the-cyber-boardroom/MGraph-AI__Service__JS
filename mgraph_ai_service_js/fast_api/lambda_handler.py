@@ -20,8 +20,9 @@ from mgraph_ai_service_js.fast_api.Service__Fast_API import Service__Fast_API
 
 with Service__Fast_API() as _:
     _.setup()
-    handler = _.handler()
-    app     = _.app()
+    service_fast_api = _                                    # capture the Service__Fast_API object (useful for tests)
+    handler          = _.handler()                          # capture the handler                  (needed by the run methods below)
+    app              = _.app()                              # capture the app                      (needed by uvicorn executable)
 
 def run(event, context=None):
     return handler(event, context)

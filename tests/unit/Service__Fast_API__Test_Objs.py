@@ -6,6 +6,8 @@ from osbot_utils.type_safe.Type_Safe                                   import Ty
 from osbot_utils.type_safe.primitives.safe_str.identifiers.Random_Guid import Random_Guid
 from osbot_utils.utils.Env                                             import set_env
 from starlette.testclient                                              import TestClient
+
+from mgraph_ai_service_js.fast_api import lambda_handler
 from mgraph_ai_service_js.fast_api.Service__Fast_API                   import Service__Fast_API
 
 TEST_API_KEY__NAME = 'key-used-in-pytest'
@@ -29,7 +31,8 @@ def setup_local_stack() -> Local_Stack:
 def setup__service_fast_api_test_objs():
         with service_fast_api_test_objs as _:
             if service_fast_api_test_objs.setup_completed is False:
-                _.fast_api         = Service__Fast_API().setup()
+                _.fast_api         = lambda_handler.service_fast_api  #use this one which is always invoked on test execution
+                #_.fast_api         = Service__Fast_API().setup()
                 _.fast_api__app    = _.fast_api.app()
                 _.fast_api__client = _.fast_api.client()
                 _.local_stack      = setup_local_stack()
