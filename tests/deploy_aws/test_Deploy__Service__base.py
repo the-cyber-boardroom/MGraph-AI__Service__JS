@@ -1,9 +1,9 @@
 import pytest
 from osbot_utils.utils.Misc                                        import list_set
 from osbot_fast_api_serverless.deploy.Deploy__Serverless__Fast_API import DEFAULT__ERROR_MESSAGE__WHEN_FAST_API_IS_OK
-from mgraph_ai_service_js.config                                 import LAMBDA_DEPENDENCIES__FAST_API_SERVERLESS
-from mgraph_ai_service_js.utils.Version                          import version__mgraph_ai_service_js
-from mgraph_ai_service_js.utils.deploy.Deploy__Service           import Deploy__Service
+from mgraph_ai_service_js.config                                   import LAMBDA_DEPENDENCIES__FAST_API_SERVERLESS
+from mgraph_ai_service_js.utils.Version                            import version__mgraph_ai_service_js
+from mgraph_ai_service_js.utils.deploy.Deploy__Service             import Deploy__Service
 
 
 class test_Deploy__Service__base():     # Base class for deployment tests - override stage in subclasses

@@ -87,19 +87,26 @@ class Deno__JS__Module__Execution(Deno__JS__Execution):
         code_to_execute = request.code
 
         # Write code to temp file and execute directly
-        file_extension = '.ts'          # in .ts , deno also handles .js files
-        with Temp_File(contents=code_to_execute, extension=file_extension, return_file_path=True) as script_file:
+        with Temp_File(contents=code_to_execute, extension='.ts', return_file_path=True) as script_file:
             params = ["run", "--quiet"]
             params.extend(self.build_module_permission_flags(config))
             params.append(f"--v8-flags=--max-old-space-size={config.max_memory_mb}")
             params.append(script_file)
 
             import time
+            import os
             start_time = time.time()
 
-            result = exec_process(self.file_path__deno(),
-                                  params,
-                                  timeout=config.max_execution_time_ms / 1000.0)
+            # Set Deno cache directory to /tmp for Lambda compatibility
+            env = os.environ.copy()
+            env['DENO_DIR'] = '/tmp/deno_cache'
+
+            result = exec_process(
+                self.file_path__deno(),
+                params,
+                timeout=config.max_execution_time_ms / 1000.0,
+                env=env  # Pass the environment with DENO_DIR set
+            )
 
             execution_time_ms = int((time.time() - start_time) * 1000)
 
@@ -109,9 +116,11 @@ class Deno__JS__Module__Execution(Deno__JS__Execution):
 
             success = result.get('status') == 'ok' and not stderr
 
-            return JS__Execution__Result(success           = success                    ,
-                                         output            = stdout                     ,
-                                         error             = stderr if stderr else None ,
-                                         execution_time_ms = execution_time_ms          ,
-                                         truncated         = len(stdout) > config.max_output_size,
-                                         deno_version      = f'v{DENO__VERSION__COMPATIBLE_WITH_LAMBDA}')
+            return JS__Execution__Result(
+                success           = success,
+                output            = stdout,
+                error             = stderr if stderr else None,
+                execution_time_ms = execution_time_ms,
+                truncated         = len(stdout) > config.max_output_size,
+                deno_version      = f'v{DENO__VERSION__COMPATIBLE_WITH_LAMBDA}'
+        )
