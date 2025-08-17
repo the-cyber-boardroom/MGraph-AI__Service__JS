@@ -20,8 +20,9 @@ from os import chmod
 from mgraph_ai_service_js.schemas.Safe_Str__Javascript import Safe_Str__Javascript
 
 # Configuration constants
-DENO__VERSION__COMPATIBLE_WITH_LAMBDA = '2.3.5'  #''2.3.1' #'2.0.0' #'1.46.3' #'1.40.5'
-DENO__VERSION__LATEST                 = '2.4.0' # and on '2.3.6', '2.3.7' this doesn't work, fails with error" "/lib64/libm.so.6: version `GLIBC_2.27' not found (required by /tmp/deno-js/deno"
+# first that works is '2.3.3'
+DENO__VERSION__COMPATIBLE_WITH_LAMBDA = '2.3.3'  # works #''2.3.1' #'2.0.0' #'1.46.3' #'1.40.5'
+DENO__VERSION__LATEST                 = '2.4.0' # and on ''2.3.4', '2.3.5', '2.3.6', '2.3.7' this doesn't work, fails with error" "/lib64/libm.so.6: version `GLIBC_2.27' not found (required by /tmp/deno-js/deno"
 FOLDER_NAME__DENO                     = 'deno-js'
 FILE__NAME__DENO                      = 'deno'
 VERSION__DENO                         = os.getenv('DENO_VERSION', f'v{DENO__VERSION__COMPATIBLE_WITH_LAMBDA}')
@@ -32,13 +33,13 @@ MAX_OUTPUT_SIZE                       = 1048576 # 1MB default
 
 
 # Deno binary checksums for verification (update these with actual values)
-DENO_CHECKSUMS = {
-    "v2.4.0": {
-        "linux-x86_64" : "sha256:...",  # TODO: Add actual checksums
-        "darwin-arm64" : "sha256:...",
-        "darwin-x86_64": "sha256:..."
-    }
-}
+# DENO_CHECKSUMS = {
+#     "v2.4.0": {
+#         "linux-x86_64" : "sha256:...",  # TODO: Add actual checksums
+#         "darwin-arm64" : "sha256:...",
+#         "darwin-x86_64": "sha256:..."
+#     }
+# }
 
 
 class JS__Execution__Permissions(Type_Safe):
@@ -79,7 +80,7 @@ class JS__Execution__Result(Type_Safe):
     execution_time_ms   : int                   = 0              # Execution duration
     memory_used_mb      : Optional[float]       = None          # Memory usage (if available)
     truncated           : bool                  = False         # Output was truncated
-    deno_version        : str                   = DENO__VERSION__COMPATIBLE_WITH_LAMBDA
+    deno_version        : str                   = f'v{DENO__VERSION__COMPATIBLE_WITH_LAMBDA}'
 
 
 class Deno__JS__Execution(Type_Safe):                           # Secure JavaScript execution service using Deno runtime
@@ -231,7 +232,7 @@ class Deno__JS__Execution(Type_Safe):                           # Secure JavaScr
                                          error             = stderr if stderr else None,
                                          execution_time_ms = execution_time_ms,
                                          truncated         = truncated        ,
-                                         deno_version      = DENO__VERSION__COMPATIBLE_WITH_LAMBDA)
+                                         deno_version      = f'v{DENO__VERSION__COMPATIBLE_WITH_LAMBDA}')
 
     def _create_wrapper_script(self, user_code          : str  ,                  # Create sandboxed wrapper script
                                      input_data         : Optional[Dict[str, Any]],

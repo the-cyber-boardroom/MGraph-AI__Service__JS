@@ -4,6 +4,7 @@ from mgraph_ai_service_js.config                                 import FAST_API
 from mgraph_ai_service_js.fast_api.Hot_Patches                   import Hot_Patches
 from mgraph_ai_service_js.fast_api.routes.Routes__Info           import Routes__Info
 from mgraph_ai_service_js.fast_api.routes.Routes__JS__Execute    import Routes__JS__Execute
+from mgraph_ai_service_js.fast_api.routes.Routes__JS__Module__Execute import Routes__JS__Module__Execute
 from mgraph_ai_service_js.utils.Version                          import version__mgraph_ai_service_js
 
 
@@ -40,9 +41,10 @@ Features:
         return self
 
     def setup_routes(self):                                                       # Configure API routes
-        self.add_routes(Routes__Info       )
-        self.add_routes(Routes__Set_Cookie )
-        self.add_routes(Routes__JS__Execute)  # Add JavaScript execution routes
+        self.add_routes(Routes__Info               )
+        self.add_routes(Routes__Set_Cookie         )
+        self.add_routes(Routes__JS__Execute        )
+        self.add_routes(Routes__JS__Module__Execute)
 
     def apply_hot_fixes(self):                                                   # Apply necessary patches
         Hot_Patches().apply()

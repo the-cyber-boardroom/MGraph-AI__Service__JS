@@ -3,7 +3,7 @@ from fastapi import HTTPException, FastAPI
 from pydantic                                               import BaseModel, Field
 from osbot_fast_api.api.routes.Fast_API__Routes             import Fast_API__Routes
 from osbot_utils.decorators.methods.cache_on_self           import cache_on_self
-from mgraph_ai_service_js.service.deno.Deno__JS__Execution  import Deno__JS__Execution
+from mgraph_ai_service_js.service.deno.Deno__JS__Execution import Deno__JS__Execution, DENO__VERSION__COMPATIBLE_WITH_LAMBDA
 from mgraph_ai_service_js.service.deno.Deno__JS__Execution  import JS__Execution__Config
 from mgraph_ai_service_js.service.deno.Deno__JS__Execution  import JS__Execution__Permissions
 from mgraph_ai_service_js.service.deno.Deno__JS__Execution  import JS__Execution__Request
@@ -87,7 +87,42 @@ class Routes__JS__Execute(Fast_API__Routes):        # FastAPI routes for JavaScr
 
     def execute(self, request: Schema__JS__Execute__Request                      # Execute JavaScript code
                ) -> Schema__JS__Execute__Response:
-        """Execute JavaScript code in a secure sandboxed environment"""
+        """Execute JavaScript code in a secure sandboxed environment
+
+Example with simple js:
+```javascript
+{
+  "code": "console.log(40+2)",
+  "config": {
+    "max_execution_time_ms": 5000,
+    "max_memory_mb": 256,
+    "max_output_size": 1048576,
+    "permissions": {
+      "allow_read": [
+      ],
+      "allow_write": [
+      ],
+      "allow_net": [
+      ],
+      "allow_env": [
+      ],
+      "allow_run": [
+      ],
+      "allow_sys": [
+      ],
+      "allow_ffi": false,
+      "allow_hrtime": false,
+      "prompt": false
+    },
+    "capture_stderr": false,
+    "json_output": false
+  },
+  "input_data": {
+    "additionalProp1": {}
+  }
+}
+```
+        """
 
         try:
             # Get or create executor
@@ -176,7 +211,7 @@ class Routes__JS__Execute(Fast_API__Routes):        # FastAPI routes for JavaScr
 
             # Try a simple execution to verify Deno is working
             test_request = JS__Execution__Request(
-                code   = "40 + 2",
+                code   = "console.log(40 + 2)",
                 config = JS__Execution__Config(max_execution_time_ms=1000)
             )
 
@@ -187,7 +222,7 @@ class Routes__JS__Execute(Fast_API__Routes):        # FastAPI routes for JavaScr
                     "status"  : "healthy"       ,
                     "service" : "js-execution"  ,
                     "runtime" : "deno"          ,
-                    "version" : "v2.4.0"
+                    "version" : f"v{DENO__VERSION__COMPATIBLE_WITH_LAMBDA}"
                 }
             else:
                 return {

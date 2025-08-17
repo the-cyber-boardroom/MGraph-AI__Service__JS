@@ -9,7 +9,7 @@ from osbot_utils.utils.Zip                          import unzip_file
 
 FOLDER_NAME__DENO                    = 'deno-js'
 FILE__NAME__DENO                     = 'deno'
-VERSION__DENO                        = 'v2.4.0'         # see https://github.com/denoland/deno/releases and https://docs.deno.com/runtime/fundamentals/stability_and_releases/
+#VERSION__DENO                        = 'v2.4.0'         # see https://github.com/denoland/deno/releases and https://docs.deno.com/runtime/fundamentals/stability_and_releases/
 URL__GITHUB__DENO__RELEASES_DOWNLOAD = "https://github.com/denoland/deno/releases/download/"
 
 class Deno__Setup(Type_Safe):
