@@ -83,7 +83,7 @@ class Deno__JS__Execution(Type_Safe):                           # Secure JavaScr
 
     def setup(self) -> 'Deno__JS__Execution':                                     # Initialize Deno runtime
         self.folder_path__deno_js()                                               # Ensure folder exists
-        self.install()                                                             # Install Deno if needed
+        self.install()                                                            # Install Deno if needed
         return self
 
     @cache_on_self

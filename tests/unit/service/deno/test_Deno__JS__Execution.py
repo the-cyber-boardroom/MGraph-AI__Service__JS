@@ -1,9 +1,7 @@
 import json
 from unittest                                                import TestCase
 from osbot_utils.helpers.duration.decorators.print_duration  import print_duration
-from osbot_utils.utils.Dev import pprint
 from osbot_utils.utils.Files                                 import file_exists, folder_exists
-from osbot_utils.utils.Objects import __
 
 from mgraph_ai_service_js.service.deno.Deno__JS__Execution   import Deno__JS__Execution
 from mgraph_ai_service_js.service.deno.Deno__JS__Execution   import JS__Execution__Config
@@ -29,10 +27,8 @@ class test_Deno__JS__Execution(TestCase):
 
     def test_02__install(self):                                                   # Test Deno installation
         with self.deno_executor as _:
-            print()
-            with print_duration():
-                assert _.install() is True
-                assert file_exists(str(_.file_path__deno()))
+            assert _.install() is True
+            assert file_exists(str(_.file_path__deno()))
 
     def test_03__execute_simple(self):                                           # Test simple execution
         request = JS__Execution__Request(code   = "console.log(40 + 2);",

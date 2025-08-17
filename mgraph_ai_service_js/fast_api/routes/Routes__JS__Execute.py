@@ -1,5 +1,5 @@
 from typing                                                 import Optional, Dict, Any
-from fastapi                                                import HTTPException
+from fastapi import HTTPException, FastAPI
 from pydantic                                               import BaseModel, Field
 from osbot_fast_api.api.routes.Fast_API__Routes             import Fast_API__Routes
 from osbot_utils.decorators.methods.cache_on_self           import cache_on_self
@@ -71,10 +71,11 @@ class Routes__JS__Execute(Fast_API__Routes):        # FastAPI routes for JavaScr
     tag              : str                   = TAG__ROUTES_JS_EXECUTE
     deno_js_executor : Deno__JS__Execution
 
-    def setup_routes(self):                                                       # Configure FastAPI routes
-        self.add_route_post(self.execute )
-        self.add_route_post(self.validate)
-        self.add_route_get (self.health  )
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        with self.deno_js_executor as _:
+            _.setup()
+            _.install()
 
     @cache_on_self
     def setup_executor(self) -> Deno__JS__Execution:                             # Initialize Deno executor
@@ -200,3 +201,8 @@ class Routes__JS__Execute(Fast_API__Routes):        # FastAPI routes for JavaScr
                 "service" : "js-execution"  ,
                 "error"   : str(e)
             }
+
+    def setup_routes(self):                                                       # Configure FastAPI routes
+        self.add_route_post(self.execute )
+        self.add_route_post(self.validate)
+        self.add_route_get (self.health  )
