@@ -5,6 +5,7 @@ from osbot_utils.testing.Temp_File import Temp_File
 from osbot_utils.utils.Dev import pprint
 from osbot_utils.utils.Files import folder_exists, file_exists, file_contents
 
+from mgraph_ai_service_js.service.deno.Deno__JS__Execution import DENO__VERSION__COMPATIBLE_WITH_LAMBDA
 from mgraph_ai_service_js.service.deno.Deno__Setup          import Deno__Setup
 
 
@@ -47,7 +48,7 @@ class test_Deno__Setup(TestCase):
                                       'runParams': [ _.file_path__deno()],
                                       'status': 'ok',
                                       'stderr': '',
-                                      'stdout': 'Deno 2.4.0\n'
+                                      'stdout': f'Deno {DENO__VERSION__COMPATIBLE_WITH_LAMBDA}\n'
                                                 'exit using ctrl+d, ctrl+c, or close()\n'
                                                 '\x1b[0m\x1b[33mREPL is running with all permissions '
                                                 'allowed.\x1b[0m\n'

@@ -20,13 +20,15 @@ from os import chmod
 from mgraph_ai_service_js.schemas.Safe_Str__Javascript import Safe_Str__Javascript
 
 # Configuration constants
-FOLDER_NAME__DENO                    = 'deno-js'
-FILE__NAME__DENO                     = 'deno'
-VERSION__DENO                        = os.getenv('DENO_VERSION', 'v2.4.0')
-URL__GITHUB__DENO__RELEASES_DOWNLOAD = "https://github.com/denoland/deno/releases/download/"
-MAX_EXECUTION_TIME_MS                = 30000  # 30 seconds default
-MAX_MEMORY_MB                        = 512    # 512MB default
-MAX_OUTPUT_SIZE                      = 1048576 # 1MB default
+DENO__VERSION__COMPATIBLE_WITH_LAMBDA = '1.37.0'
+DENO__VERSION__LATEST                 = '2.4.0'
+FOLDER_NAME__DENO                     = 'deno-js'
+FILE__NAME__DENO                      = 'deno'
+VERSION__DENO                         = os.getenv('DENO_VERSION', f'v{DENO__VERSION__COMPATIBLE_WITH_LAMBDA}')
+URL__GITHUB__DENO__RELEASES_DOWNLOAD  = "https://github.com/denoland/deno/releases/download/"
+MAX_EXECUTION_TIME_MS                 = 30000  # 30 seconds default
+MAX_MEMORY_MB                         = 512    # 512MB default
+MAX_OUTPUT_SIZE                       = 1048576 # 1MB default
 
 
 # Deno binary checksums for verification (update these with actual values)
