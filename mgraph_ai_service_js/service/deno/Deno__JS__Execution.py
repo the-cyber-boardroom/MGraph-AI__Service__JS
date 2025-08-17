@@ -20,7 +20,7 @@ from os import chmod
 from mgraph_ai_service_js.schemas.Safe_Str__Javascript import Safe_Str__Javascript
 
 # Configuration constants
-DENO__VERSION__COMPATIBLE_WITH_LAMBDA = '1.40.5'
+DENO__VERSION__COMPATIBLE_WITH_LAMBDA = '1.46.3' #'1.40.5'
 DENO__VERSION__LATEST                 = '2.4.0'
 FOLDER_NAME__DENO                     = 'deno-js'
 FILE__NAME__DENO                      = 'deno'
@@ -74,11 +74,12 @@ class JS__Execution__Request(Type_Safe):
 class JS__Execution__Result(Type_Safe):
     """Result model for JavaScript execution"""
     success             : bool                                                    # Execution succeeded
-    output              : Optional[str]                         = None          # Standard output
-    error               : Optional[str]                         = None          # Error output
-    execution_time_ms   : int                                   = 0              # Execution duration
-    memory_used_mb      : Optional[float]                       = None          # Memory usage (if available)
-    truncated           : bool                                   = False         # Output was truncated
+    output              : Optional[str]         = None          # Standard output
+    error               : Optional[str]         = None          # Error output
+    execution_time_ms   : int                   = 0              # Execution duration
+    memory_used_mb      : Optional[float]       = None          # Memory usage (if available)
+    truncated           : bool                  = False         # Output was truncated
+    deno_version        : str                   = DENO__VERSION__COMPATIBLE_WITH_LAMBDA
 
 
 class Deno__JS__Execution(Type_Safe):                           # Secure JavaScript execution service using Deno runtime
@@ -226,10 +227,11 @@ class Deno__JS__Execution(Type_Safe):                           # Secure JavaScr
                 output = f"{output}\n--- STDERR ---\n{stderr}"
 
             return JS__Execution__Result(success           = success          ,
-                                        output            = output           ,
-                                        error             = stderr if stderr else None,
-                                        execution_time_ms = execution_time_ms,
-                                        truncated         = truncated        )
+                                         output            = output           ,
+                                         error             = stderr if stderr else None,
+                                         execution_time_ms = execution_time_ms,
+                                         truncated         = truncated        ,
+                                         deno_version      = DENO__VERSION__COMPATIBLE_WITH_LAMBDA)
 
     def _create_wrapper_script(self, user_code          : str  ,                  # Create sandboxed wrapper script
                                      input_data         : Optional[Dict[str, Any]],

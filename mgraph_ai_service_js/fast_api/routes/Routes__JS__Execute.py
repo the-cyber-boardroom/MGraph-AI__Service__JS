@@ -48,6 +48,7 @@ class Schema__JS__Execute__Response(BaseModel):
     execution_time_ms : int           = Field(..., description="Execution duration in milliseconds")
     memory_used_mb    : Optional[float] = Field(None, description="Memory usage in MB")
     truncated         : bool           = Field(False, description="Output was truncated")
+    deno_version      : str
 
 
 class Schema__JS__Validate__Request(BaseModel):
@@ -136,7 +137,8 @@ class Routes__JS__Execute(Fast_API__Routes):        # FastAPI routes for JavaScr
                 error             = result.error            ,
                 execution_time_ms = result.execution_time_ms,
                 memory_used_mb    = result.memory_used_mb   ,
-                truncated         = result.truncated
+                truncated         = result.truncated        ,
+                deno_version      = result.deno_version
             )
 
         except ValueError as e:
