@@ -1,8 +1,10 @@
 from unittest import TestCase
 
 from osbot_utils.helpers.duration.decorators.print_duration import print_duration
+from osbot_utils.testing.Temp_File import Temp_File
 from osbot_utils.utils.Dev import pprint
-from osbot_utils.utils.Files                                import folder_exists, file_exists
+from osbot_utils.utils.Files import folder_exists, file_exists, file_contents
+
 from mgraph_ai_service_js.service.deno.Deno__Setup          import Deno__Setup
 
 
@@ -50,3 +52,14 @@ class test_Deno__Setup(TestCase):
                                                 '\x1b[0m\x1b[33mREPL is running with all permissions '
                                                 'allowed.\x1b[0m\n'
                                                 'To specify permissions, run `deno repl` with allow flags.\n'}
+
+    def test_3__eval(self):
+        with self.deno_setup as _:
+            assert _.eval("console.log(40+2);", include_stderr=True) == '42'
+
+    def test_4__run(self):
+        js_file__contents = "console.log('it is: ' + (40 +2))"
+
+        with Temp_File(contents=js_file__contents, extension='.js', return_file_path=True) as temp_js_file:
+            with self.deno_setup as _:
+                assert _.run(temp_js_file) == 'it is: 42'

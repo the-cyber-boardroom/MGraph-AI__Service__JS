@@ -4,7 +4,7 @@ from osbot_utils.decorators.methods.cache_on_self   import cache_on_self
 from osbot_utils.type_safe.Type_Safe                import Type_Safe
 from osbot_utils.utils.Files                        import path_combine, current_temp_folder, create_folder, file_exists, file_not_exists
 from osbot_utils.utils.Http                         import GET_bytes_to_file
-from osbot_utils.utils.Process import Process, exec_process
+from osbot_utils.utils.Process                      import exec_process
 from osbot_utils.utils.Zip                          import unzip_file
 
 FOLDER_NAME__DENO                    = 'deno-js'
@@ -64,3 +64,21 @@ class Deno__Setup(Type_Safe):
 
     def execute(self, params):
         return exec_process(self.file_path__deno(), params)
+
+    def eval(self, js_code, include_stderr = False):
+        params = ["eval", js_code]
+        result = exec_process(self.file_path__deno(), params)
+        stderr = result.get('stderr')
+        stdout = result.get('stdout').strip()
+        if include_stderr:
+            return stderr + stdout
+        return stdout
+
+    def run(self, js_code, include_stderr = False):
+        params = ["run", js_code]
+        result = exec_process(self.file_path__deno(), params)
+        stderr = result.get('stderr')
+        stdout = result.get('stdout').strip()
+        if include_stderr:
+            return stderr + stdout
+        return stdout
