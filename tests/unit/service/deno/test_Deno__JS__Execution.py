@@ -22,19 +22,19 @@ class test_Deno__JS__Execution(TestCase):
         with self.deno_executor as _:
             assert type(_) is Deno__JS__Execution
 
-    def test_1__setup(self):                                                     # Test setup process
+    def test_01__setup(self):                                                     # Test setup process
         with self.deno_executor as _:
             assert _.setup() == _
             assert folder_exists(str(_.folder_path__deno_js()))
 
-    def test_2__install(self):                                                   # Test Deno installation
+    def test_02__install(self):                                                   # Test Deno installation
         with self.deno_executor as _:
             print()
             with print_duration():
                 assert _.install() is True
                 assert file_exists(str(_.file_path__deno()))
 
-    def test_3__execute_simple(self):                                           # Test simple execution
+    def test_03__execute_simple(self):                                           # Test simple execution
         request = JS__Execution__Request(code   = "console.log(40 + 2);",
                                          config = JS__Execution__Config())
 
@@ -47,7 +47,7 @@ class test_Deno__JS__Execution(TestCase):
         assert result.truncated   is False
         assert result.execution_time_ms > 0
 
-    def test_4__execute_with_input_data(self):                                  # Test execution with input data
+    def test_04__execute_with_input_data(self):                                  # Test execution with input data
         request = JS__Execution__Request(
             code       = """
                 const numbers = INPUT.numbers;
@@ -64,7 +64,7 @@ class test_Deno__JS__Execution(TestCase):
         assert result.success is True
         assert "15" in result.output
 
-    def test_5__execute_with_permissions(self):                                 # Test permission restrictions
+    def test_05__execute_with_permissions(self):                                 # Test permission restrictions
         request_no_perms = JS__Execution__Request(                              # Test with no permissions (should fail to access file system)
             code   = """
                 try {
@@ -103,7 +103,7 @@ class test_Deno__JS__Execution(TestCase):
         result = self.deno_executor.execute_js(request_with_perms)
         assert "WRITE SUCCESS" in result.output
 
-    def test_6__execute_with_timeout(self):                                     # Test execution timeout
+    def test_06__execute_with_timeout(self):                                     # Test execution timeout
         request = JS__Execution__Request(
             code   = """
                 // Infinite loop
@@ -120,7 +120,7 @@ class test_Deno__JS__Execution(TestCase):
         assert result.execution_time_ms >= 100
         assert result.execution_time_ms < 500  # Should timeout quickly
 
-    def test_7__execute_with_error(self):                                       # Test error handling
+    def test_07__execute_with_error(self):                                       # Test error handling
         request = JS__Execution__Request(
             code   = """
                 throw new Error('Test error');
@@ -134,7 +134,7 @@ class test_Deno__JS__Execution(TestCase):
         assert result.error is not None
         assert "Test error" in result.error or "Test error" in result.output
 
-    def test_8__validate_syntax(self):                                          # Test syntax validation
+    def test_08__validate_syntax(self):                                          # Test syntax validation
 
         valid, error = self.deno_executor.validate_js_syntax("const x = 42;")   # Valid syntax
         assert valid is True
@@ -145,7 +145,7 @@ class test_Deno__JS__Execution(TestCase):
         assert valid is False
         assert error is not None
 
-    def test_9__execute_with_json_output(self):                                 # Test JSON output mode
+    def test_09__execute_with_json_output(self):                                 # Test JSON output mode
         request = JS__Execution__Request(
             code   = """
                 const result = {

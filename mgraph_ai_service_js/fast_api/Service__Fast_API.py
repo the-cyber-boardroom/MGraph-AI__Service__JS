@@ -25,17 +25,17 @@ class Service__Fast_API(Serverless__Fast_API):
 
         # Update description to reflect JS execution capability
         app.description = """
-        MGraph-AI Service for secure JavaScript code execution.
-        
-        This service provides a sandboxed environment for executing JavaScript code
-        using the Deno runtime with configurable security permissions and resource limits.
-        
-        Features:
-        - Secure sandboxed execution
-        - Configurable permissions (file, network, environment)
-        - Resource limits (time, memory, output size)
-        - Syntax validation
-        - JSON input/output support
+MGraph-AI Service for secure JavaScript code execution.
+
+This service provides a sandboxed environment for executing JavaScript code
+using the Deno runtime with configurable security permissions and resource limits.
+
+Features:
+- Secure sandboxed execution
+- Configurable permissions (file, network, environment)
+- Resource limits (time, memory, output size)
+- Syntax validation
+- JSON input/output support
         """
         return self
 
