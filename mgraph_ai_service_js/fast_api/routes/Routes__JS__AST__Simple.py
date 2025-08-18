@@ -1,3 +1,4 @@
+import json
 from typing                                                        import Dict, Any
 from fastapi                                                       import HTTPException
 from pydantic                                                      import BaseModel, Field
@@ -66,6 +67,26 @@ class Schema__Simple__AST_to_JS__Response(BaseModel):
 #         example="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
 #     )
 
+class Schema__Simple__JSON_to_AST__Request(BaseModel):
+    """Simple request with raw JSON to convert to AST"""
+    json_data: str = Field(
+        ...,
+        description="Raw JSON data to convert to JavaScript AST (paste directly, no escaping needed)",
+        example='{"name": "John", "age": 30, "items": [1, 2, 3], "active": true}'
+    )
+
+
+class Schema__Simple__JSON_to_AST__Response(BaseModel):
+    """Response with AST representation of the JSON data"""
+    ast: Dict[str, Any] = Field(
+        ...,
+        description="ESTree AST representation of the JSON as JavaScript"
+    )
+    original_json: Dict[str, Any] = Field(
+        ...,
+        description="The parsed JSON data for reference"
+    )
+
 
 class Schema__Simple__URL_to_AST__Response(BaseModel):
     """Response with AST and metadata from URL"""
@@ -86,7 +107,8 @@ class Schema__Simple__URL_to_AST__Response(BaseModel):
 TAG__ROUTES_JS_AST_SIMPLE   = 'js-ast-simple'
 ROUTES_PATHS__JS_AST_SIMPLE = [f'/{TAG__ROUTES_JS_AST_SIMPLE}/js-to-ast',
                                f'/{TAG__ROUTES_JS_AST_SIMPLE}/ast-to-js',
-                               f'/{TAG__ROUTES_JS_AST_SIMPLE}/url-to-ast']
+                               f'/{TAG__ROUTES_JS_AST_SIMPLE}/url-to-ast',
+                               f'/{TAG__ROUTES_JS_AST_SIMPLE}/json-to-ast']
 
 
 class Routes__JS__AST__Simple(Fast_API__Routes):
@@ -277,8 +299,74 @@ class Routes__JS__AST__Simple(Fast_API__Routes):
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
+    def json_to_ast(self, json_data: dict
+               ) -> dict:
+        """
+        Convert JSON data to JavaScript AST
+
+        Takes raw JSON data and converts it to an AST representation of JavaScript code
+        that would create that data structure.
+
+        The JSON is converted to: `const data = <your_json>;`
+
+        Example JSON inputs:
+        - Simple object: `{"key": "value"}`
+        - Array: `[1, 2, 3, 4, 5]`
+        - Complex nested: `{"users": [{"name": "Alice", "age": 30}]}`
+        - Mixed types: `{"string": "text", "number": 42, "boolean": true, "null": null}`
+
+        Perfect for:
+        - Analyzing data structure as code
+        - Converting JSON configs to JavaScript
+        - Understanding how data maps to AST
+        """
+        try:
+            # Parse the JSON string
+            # try:
+            #     json_obj = json.loads(request.json_data)
+            # except json.JSONDecodeError as e:
+            #     raise HTTPException(
+            #         status_code=400,
+            #         detail=f"Invalid JSON: {str(e)}"
+            #     )
+
+            # Convert JSON to JavaScript code
+            # Using json.dumps with ensure_ascii=False for better readability
+            json_as_js_literal = json.dumps(json_data, ensure_ascii=False, indent=2)
+
+            # Create JavaScript code that assigns this to a variable
+            js_code = f"const data = {json_as_js_literal};"
+
+            # Parse to AST
+            parse_request = JS__AST__Parse__Request(
+                code    = Safe_Str__Javascript(js_code),
+                options = JS__AST__Parser__Options()
+            )
+
+            response = self.ast_service.parse_to_ast(parse_request)
+
+            if not response.success:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to parse generated JavaScript: {response.error}"
+                )
+            return response.ast
+            # return Schema__Simple__JSON_to_AST__Response(
+            #     ast           = response.ast,
+            #     original_json = json_data
+            # )
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Unexpected error: {str(e)}"
+            )
+
     def setup_routes(self):
         """Configure the FastAPI routes"""
-        self.add_route_post(self.js_to_ast)
-        self.add_route_post(self.ast_to_js)
-        self.add_route_get (self.url_to_ast)
+        self.add_route_post(self.js_to_ast  )
+        self.add_route_post(self.ast_to_js  )
+        self.add_route_get (self.url_to_ast )
+        self.add_route_post(self.json_to_ast)
