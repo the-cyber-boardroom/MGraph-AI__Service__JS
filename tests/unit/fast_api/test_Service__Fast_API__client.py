@@ -7,6 +7,7 @@ from starlette.testclient                                             import Tes
 from osbot_fast_api_serverless.utils.testing.skip_tests               import skip__if_not__in_github_actions
 from mgraph_ai_service_js.fast_api.Service__Fast_API                  import Service__Fast_API
 from mgraph_ai_service_js.fast_api.routes.Routes__Info                import ROUTES_PATHS__INFO, ROUTES_INFO__HEALTH__RETURN_VALUE
+from mgraph_ai_service_js.fast_api.routes.Routes__JS__AST__Simple import ROUTES_PATHS__JS_AST_SIMPLE
 from mgraph_ai_service_js.fast_api.routes.Routes__JS__ASTpy import ROUTES_PATHS__JS_AST
 from mgraph_ai_service_js.fast_api.routes.Routes__JS__Execute         import ROUTES_PATHS__JS_EXECUTE
 from mgraph_ai_service_js.fast_api.routes.Routes__JS__Module__Execute import ROUTES_PATHS__JS_MODULE
@@ -58,9 +59,10 @@ class test_Service__Fast_API__client(TestCase):
             assert _.is_local_stack_configured_and_available() is True
 
     def test__config_fast_api_routes(self):
-        assert self.fast_api.routes_paths() == sorted(['/auth/set-auth-cookie'            ,
-                                                       '/auth/set-cookie-form' ] +
-                                                       ROUTES_PATHS__INFO        +
-                                                       ROUTES_PATHS__JS_EXECUTE  +
-                                                       ROUTES_PATHS__JS_MODULE   +
-                                                       ROUTES_PATHS__JS_AST      )
+        assert self.fast_api.routes_paths() == sorted(['/auth/set-auth-cookie'     ,
+                                                       '/auth/set-cookie-form' ]   +
+                                                       ROUTES_PATHS__INFO          +
+                                                       ROUTES_PATHS__JS_EXECUTE    +
+                                                       ROUTES_PATHS__JS_MODULE     +
+                                                       ROUTES_PATHS__JS_AST        +
+                                                       ROUTES_PATHS__JS_AST_SIMPLE )
