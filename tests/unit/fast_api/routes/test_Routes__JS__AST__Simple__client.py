@@ -245,3 +245,58 @@ class test_Routes__JS__AST__Simple__client(TestCase):
         assert response.status_code == 200
         code = response.json()['code']
         assert "`Hello, ${name}!`" in code
+
+
+    def test_url_to_ast_simple(self):
+        """Test URL to AST conversion with a simple JavaScript file"""
+        # Using a small, reliable CDN-hosted file for testing
+        request_data = { "url": "https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js" }
+
+        response = self.client.get('/js-ast-simple/url-to-ast', params=request_data)
+
+        # If external request fails (CI/CD environments), skip
+        if response.status_code == 404:
+            self.skipTest("External URL not accessible in test environment")
+
+        assert response.status_code == 200
+        result = response.json()
+        assert 'ast' in result
+        assert 'url' in result
+        assert 'size' in result
+        assert result['ast']['type'] == 'Program'
+        assert result['url'] == request_data['url']
+        assert result['size'] > 0
+
+    def test_url_to_ast_invalid_url(self):
+        """Test URL to AST with invalid URL format"""
+        request_data = { "url": "not-a-valid-url" }
+
+        response = self.client.get('/js-ast-simple/url-to-ast', params=request_data)
+
+        assert response.status_code == 400
+        error = response.json()
+        assert 'detail' in error
+        assert 'must start with http://' in error['detail']
+
+    def test_url_to_ast_html_content(self):
+        """Test URL to AST with HTML page instead of JS"""
+        request_data = { "url": "https://www.google.com" }
+
+        response = self.client.get('/js-ast-simple/url-to-ast', params=request_data)
+
+        assert response.status_code == 400
+        error = response.json()
+
+        assert 'HTML content' in error.get('detail', '')
+
+    def test_url_to_ast_nonexistent(self):
+        """Test URL to AST with non-existent URL"""
+        request_data = {
+            "url": "https://this-domain-definitely-does-not-exist-12345.com/script.js"
+        }
+
+        response = self.client.get('/js-ast-simple/url-to-ast', params=request_data)
+
+        assert response.status_code in [404, 500]
+        error = response.json()
+        assert 'detail' in error

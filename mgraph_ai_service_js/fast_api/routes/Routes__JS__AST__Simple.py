@@ -2,6 +2,7 @@ from typing                                                        import Dict, 
 from fastapi                                                       import HTTPException
 from pydantic                                                      import BaseModel, Field
 from osbot_fast_api.api.routes.Fast_API__Routes                    import Fast_API__Routes
+from osbot_utils.utils.Http                                        import GET
 from mgraph_ai_service_js.service.js_ast.JS__AST__Roundtrip        import JS__AST__Roundtrip
 from mgraph_ai_service_js.service.js_ast.schemas.JS__AST__Schemas  import JS__AST__Parser__Options
 from mgraph_ai_service_js.service.js_ast.schemas.JS__AST__Schemas  import JS__AST__Generator__Options
@@ -57,9 +58,35 @@ class Schema__Simple__AST_to_JS__Response(BaseModel):
     )
 
 
+# class Schema__Simple__URL_to_AST__Request(BaseModel):
+#     """Simple request with URL to fetch JavaScript from"""
+#     url: str = Field(
+#         ...,
+#         description="URL of JavaScript file to parse into AST",
+#         example="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
+#     )
+
+
+class Schema__Simple__URL_to_AST__Response(BaseModel):
+    """Response with AST and metadata from URL"""
+    ast: Dict[str, Any] = Field(
+        ...,
+        description="ESTree AST representation"
+    )
+    url: str = Field(
+        ...,
+        description="Original URL"
+    )
+    size: int = Field(
+        ...,
+        description="Size of fetched JavaScript in bytes"
+    )
+
+
 TAG__ROUTES_JS_AST_SIMPLE   = 'js-ast-simple'
 ROUTES_PATHS__JS_AST_SIMPLE = [f'/{TAG__ROUTES_JS_AST_SIMPLE}/js-to-ast',
-                               f'/{TAG__ROUTES_JS_AST_SIMPLE}/ast-to-js']
+                               f'/{TAG__ROUTES_JS_AST_SIMPLE}/ast-to-js',
+                               f'/{TAG__ROUTES_JS_AST_SIMPLE}/url-to-ast']
 
 
 class Routes__JS__AST__Simple(Fast_API__Routes):
@@ -164,7 +191,94 @@ class Routes__JS__AST__Simple(Fast_API__Routes):
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
+    def url_to_ast(self, url: str = "https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js") -> Schema__Simple__URL_to_AST__Response:
+        """
+        Fetch JavaScript from URL and convert to AST
+
+        Simple endpoint that fetches JavaScript code from a URL and returns the ESTree AST.
+        Perfect for analyzing external scripts, CDN libraries, or any publicly accessible JavaScript.
+
+        Example URLs to try:
+        - Small library: `https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.2/uuid.min.js`
+        - jQuery: `https://code.jquery.com/jquery-3.6.0.min.js`
+        - React: `https://unpkg.com/react@18/umd/react.production.min.js`
+        - Lodash: `https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js`
+
+        Note: The URL must be publicly accessible (no authentication required).
+        Large files may take longer to process.
+        """
+        try:
+            # Validate URL format
+            if not url.startswith(('http://', 'https://')):
+                raise HTTPException(
+                    status_code=400,
+                    detail="URL must start with http:// or https://"
+                )
+
+            # Fetch the JavaScript content
+            try:
+                response = GET(url)
+                if response is None or response == '':
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"Could not fetch content from URL: {url}"
+                    )
+
+                # Check if content looks like JavaScript (basic validation)
+                content_lower = response[:1000].lower()  # Check first 1KB
+                if 'html' in content_lower and '<html' in content_lower:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="URL returned HTML content, not JavaScript"
+                    )
+
+            except Exception as e:
+                if isinstance(e, HTTPException):
+                    raise
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to fetch URL: {str(e)}"
+                )
+
+            # Get size before processing
+            content_size = len(response.encode('utf-8'))
+
+            # Check size limit (10MB)
+            if content_size > 10 * 1024 * 1024:
+                raise HTTPException(
+                    status_code=413,
+                    detail=f"JavaScript file too large: {content_size} bytes (max 10MB)"
+                )
+
+            # Parse the JavaScript code
+            parse_request = JS__AST__Parse__Request(
+                code    = Safe_Str__Javascript(response),
+                options = JS__AST__Parser__Options()
+            )
+
+            parse_response = self.ast_service.parse_to_ast(parse_request)
+
+            if not parse_response.success:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Parse error: {parse_response.error}"
+                )
+
+            return Schema__Simple__URL_to_AST__Response(
+                ast  = parse_response.ast,
+                url  = url,
+                size = content_size
+            )
+
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
     def setup_routes(self):
         """Configure the FastAPI routes"""
         self.add_route_post(self.js_to_ast)
         self.add_route_post(self.ast_to_js)
+        self.add_route_get (self.url_to_ast)
