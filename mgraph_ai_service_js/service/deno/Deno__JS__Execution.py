@@ -234,14 +234,6 @@ class Deno__JS__Execution(Type_Safe):                           # Secure JavaScr
                                          truncated         = truncated        ,
                                          deno_version      = f'v{DENO__VERSION__COMPATIBLE_WITH_LAMBDA}')
 
-    def _create_wrapper_script(self, user_code          : str  ,                  # Create sandboxed wrapper script
-                                     input_data         : Optional[Dict[str, Any]],
-                                     max_execution_time : int  ,
-                                     json_output        : bool
-                               ) -> str:
-
-        # Prepare input data
-        input_json = json_dumps(input_data) if input_data else '{}'
 
     def _create_wrapper_script(self, user_code          : str  ,                  # Create sandboxed wrapper script
                                      input_data         : Optional[Dict[str, Any]],
