@@ -11,10 +11,6 @@ class test_Routes__JS__AST__Simple__client(TestCase):
             cls.client = _.fast_api__client
             cls.client.headers[TEST_API_KEY__NAME] = TEST_API_KEY__VALUE
 
-            # Add the simple routes to the FastAPI app
-            from mgraph_ai_service_js.fast_api.routes.Routes__JS__AST__Simple import Routes__JS__AST__Simple
-            _.fast_api.add_routes(Routes__JS__AST__Simple)
-
     def test_js_to_ast_simple(self):
         """Test simple JS to AST conversion"""
         request_data = {

@@ -3,6 +3,7 @@ from osbot_fast_api_serverless.fast_api.Serverless__Fast_API          import Ser
 from mgraph_ai_service_js.config                                      import FAST_API__TITLE
 from mgraph_ai_service_js.fast_api.Hot_Patches                        import Hot_Patches
 from mgraph_ai_service_js.fast_api.routes.Routes__Info                import Routes__Info
+from mgraph_ai_service_js.fast_api.routes.Routes__JS__AST__Simple import Routes__JS__AST__Simple
 from mgraph_ai_service_js.fast_api.routes.Routes__JS__ASTpy           import Routes__JS__AST
 from mgraph_ai_service_js.fast_api.routes.Routes__JS__Execute         import Routes__JS__Execute
 from mgraph_ai_service_js.fast_api.routes.Routes__JS__Module__Execute import Routes__JS__Module__Execute
@@ -47,6 +48,7 @@ Features:
         self.add_routes(Routes__JS__Execute        )
         self.add_routes(Routes__JS__Module__Execute)
         self.add_routes(Routes__JS__AST            )
+        self.add_routes(Routes__JS__AST__Simple    )
 
     def apply_hot_fixes(self):                                                   # Apply necessary patches
         Hot_Patches().apply()

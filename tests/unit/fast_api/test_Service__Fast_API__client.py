@@ -7,8 +7,8 @@ from starlette.testclient                                             import Tes
 from osbot_fast_api_serverless.utils.testing.skip_tests               import skip__if_not__in_github_actions
 from mgraph_ai_service_js.fast_api.Service__Fast_API                  import Service__Fast_API
 from mgraph_ai_service_js.fast_api.routes.Routes__Info                import ROUTES_PATHS__INFO, ROUTES_INFO__HEALTH__RETURN_VALUE
-from mgraph_ai_service_js.fast_api.routes.Routes__JS__AST__Simple import ROUTES_PATHS__JS_AST_SIMPLE
-from mgraph_ai_service_js.fast_api.routes.Routes__JS__ASTpy import ROUTES_PATHS__JS_AST
+from mgraph_ai_service_js.fast_api.routes.Routes__JS__AST__Simple     import ROUTES_PATHS__JS_AST_SIMPLE
+from mgraph_ai_service_js.fast_api.routes.Routes__JS__ASTpy           import ROUTES_PATHS__JS_AST
 from mgraph_ai_service_js.fast_api.routes.Routes__JS__Execute         import ROUTES_PATHS__JS_EXECUTE
 from mgraph_ai_service_js.fast_api.routes.Routes__JS__Module__Execute import ROUTES_PATHS__JS_MODULE
 from tests.unit.Service__Fast_API__Test_Objs                          import setup__service_fast_api_test_objs, Service__Fast_API__Test_Objs, TEST_API_KEY__NAME
